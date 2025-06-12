@@ -130,6 +130,39 @@ func (h *VehicleDefault) GetByColorAndYears() http.HandlerFunc {
 	}
 }
 
+func (h *VehicleDefault) GetVelocidadeMediaMarca() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		brand := chi.URLParam(r, "brand")
+
+		fmt.Println("Query parans", brand)
+
+		m, err := h.sv.FindVelocidadeMediaMarca(brand)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleBrand) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Nenhuma marca encontrado.",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusInternalServerError, map[string]any{
+				"message": err.Error(),
+				"data":    nil,
+			})
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "success",
+			"data":    m,
+		})
+
+	}
+}
+
 func (h *VehicleDefault) GetByMarcaAndYearInterval() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {

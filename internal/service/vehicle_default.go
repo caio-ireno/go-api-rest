@@ -36,6 +36,21 @@ func (s *VehicleDefault) FindByColorAndYears(color, year string) (v map[int]inte
 	return
 }
 
+func (s *VehicleDefault) FindVelocidadeMediaMarca(brand string) (m float64, err error) {
+	m, err = s.rp.FindVelocidadeMediaMarca(brand)
+
+	if err != nil {
+		return
+	}
+
+	if m == 0 {
+		err = apperrors.ErrVehicleBrand
+		return
+	}
+
+	return
+}
+
 func (s *VehicleDefault) FindByMarcaAndYearInterval(brand, start_year, end_year string) (v map[int]internal.Vehicle, err error) {
 	v, err = s.rp.FindByMarcaAndYearInterval(brand, start_year, end_year)
 

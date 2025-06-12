@@ -35,6 +35,29 @@ func (r *VehicleMap) FindAll() (v map[int]internal.Vehicle, err error) {
 	return
 }
 
+func (r *VehicleMap) FindVelocidadeMediaMarca(brand string) (m float64, err error) {
+	fmt.Println("Query parans", brand)
+	brandCaptalize := utils.CapitalizeFirst(brand)
+
+	sum := 0.0
+	count := 0
+	for _, value := range r.db {
+		if value.Brand == brandCaptalize {
+			sum += value.MaxSpeed
+			count += 1
+
+		}
+	}
+
+	if count == 0 {
+		m = 0
+		return
+	}
+	m = sum / float64(count)
+
+	return
+}
+
 // FindAll is a method that returns a map of all vehicles
 func (r *VehicleMap) FindByMarcaAndYearInterval(brand, start_year, end_year string) (v map[int]internal.Vehicle, err error) {
 	fmt.Println("Query parans", brand, start_year, end_year)

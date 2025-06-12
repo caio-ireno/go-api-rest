@@ -7,4 +7,5 @@ type VehicleRepository interface {
 	Save(vh *VehicleAttributes) (v Vehicle, err error)
 	FindByColorAndYears(color, year string) (v map[int]Vehicle, err error)
 	FindByMarcaAndYearInterval(brand, start_year, end_year string) (v map[int]Vehicle, err error)
+	FindVelocidadeMediaMarca(brand string) (m float64, err error)
 }
