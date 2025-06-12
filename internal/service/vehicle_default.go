@@ -22,6 +22,16 @@ func (s *VehicleDefault) FindAll() (v map[int]internal.Vehicle, err error) {
 	return
 }
 
+func (s *VehicleDefault) FindById(id string) (v internal.Vehicle, err error) {
+	v, err = s.rp.FindById(id)
+
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 func (s *VehicleDefault) FindByColorAndYears(color, year string) (v map[int]internal.Vehicle, err error) {
 	v, err = s.rp.FindByColorAndYears(color, year)
 
@@ -127,5 +137,17 @@ func (s *VehicleDefault) SaveMultipleVehicles(vh *[]internal.VehicleAttributes) 
 		registroMap[vehicle.Registration] = struct{}{}
 	}
 
+	return
+}
+
+func (s *VehicleDefault) Patch(vh *internal.Vehicle) (v internal.Vehicle, err error) {
+
+	err = vh.VehicleAttributes.Validate()
+
+	if err != nil {
+		return
+	}
+
+	v, err = s.rp.Patch(vh)
 	return
 }

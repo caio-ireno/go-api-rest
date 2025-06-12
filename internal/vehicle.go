@@ -47,6 +47,12 @@ type Vehicle struct {
 	VehicleAttributes
 }
 
+func (v *VehicleAttributes) ToDomain() *Vehicle {
+	return &Vehicle{
+		VehicleAttributes: *v,
+	}
+}
+
 func (v *VehicleAttributes) Validate() error {
 	if v.Brand == "" {
 		return errors.New("brand is required")
@@ -80,9 +86,6 @@ func (v *VehicleAttributes) Validate() error {
 	}
 	if v.Height <= 0 {
 		return errors.New("dimensions: height must be greater than zero")
-	}
-	if v.Length <= 0 {
-		return errors.New("dimensions: length must be greater than zero")
 	}
 	if v.Width <= 0 {
 		return errors.New("dimensions: width must be greater than zero")

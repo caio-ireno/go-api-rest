@@ -78,7 +78,13 @@ func (a *ServerChi) Run() (err error) {
 		rt.Get("/average_speed/brand/{brand}", hd.GetVelocidadeMediaMarca())
 		// Rota 1 adicionar veiculo
 		rt.Post("/", hd.Save())
+
+		// - POST multiplos veiculos
 		rt.Post("/batch", hd.SaveMultipleVehicles())
+
+		// - PATCH - vehicles/{id}/update_speed
+		rt.Patch("/{id}/update_speed", hd.Patch())
+
 	})
 
 	rt.Route("/vehiclesc", func(rt chi.Router) {

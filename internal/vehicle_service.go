@@ -6,7 +6,10 @@ type VehicleService interface {
 	FindAll() (v map[int]Vehicle, err error)
 	Save(vh *VehicleAttributes) (v Vehicle, err error)
 	FindByColorAndYears(color, year string) (v map[int]Vehicle, err error)
+	FindById(id string) (v Vehicle, err error)
 	FindByMarcaAndYearInterval(brand, start_year, end_year string) (v map[int]Vehicle, err error)
 	FindVelocidadeMediaMarca(brand string) (m float64, err error)
 	SaveMultipleVehicles(vh *[]VehicleAttributes) (v map[int]Vehicle, err error)
+
+	Patch(vh *Vehicle) (v Vehicle, err error)
 }

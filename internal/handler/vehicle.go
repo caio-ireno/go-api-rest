@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/bootcamp-go/web/response"
 	"github.com/go-chi/chi/v5"
@@ -291,6 +292,89 @@ func (h *VehicleDefault) SaveMultipleVehicles() http.HandlerFunc {
 
 		response.JSON(w, http.StatusCreated, map[string]any{
 			"message": "Veículo criado com sucesso.",
+			"data":    v,
+		})
+	}
+}
+
+func (h *VehicleDefault) Patch() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vehicleId := chi.URLParam(r, "id")
+		vehicleIdInt, errId := strconv.Atoi(vehicleId)
+
+		if errId != nil {
+			response.JSON(w, http.StatusNotFound, map[string]any{
+				"message": "Id Errado ou Invalido",
+				"data":    nil,
+			})
+			return
+		}
+
+		vehicle, ok := h.sv.FindById(vehicleId)
+
+		if ok != nil {
+			if errors.Is(ok, apperrors.ErrVehicleWithCriteria) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Nenhum veículo encontrado com esses critérios.",
+					"data":    nil,
+				})
+				return
+			}
+		}
+
+		reqBody := internal.VehicleAttributes{
+			Brand:        vehicle.Brand,
+			Model:        vehicle.Model,
+			Registration: vehicle.Registration,
+
+			Color:           vehicle.Color,
+			FabricationYear: vehicle.FabricationYear,
+			Capacity:        vehicle.Capacity,
+			MaxSpeed:        vehicle.MaxSpeed,
+			FuelType:        vehicle.FuelType,
+			Transmission:    vehicle.Transmission,
+			Weight:          vehicle.Weight,
+			Dimensions: internal.Dimensions{
+				Height: vehicle.Height,
+				Width:  vehicle.Weight,
+			},
+		}
+
+		err := json.NewDecoder(r.Body).Decode(&reqBody)
+
+		if err != nil {
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "bad request: Dados do veículo mal formatados ou incompletos.",
+				"data":    nil,
+			})
+			return
+		}
+
+		vh := reqBody.ToDomain()
+		vh.Id = vehicleIdInt
+
+		fmt.Println(vh)
+
+		v, err := h.sv.Patch(vh)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+				response.JSON(w, http.StatusConflict, map[string]any{
+					"message": "Veiculo não encontrado",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusInternalServerError, map[string]any{
+				"message": err.Error(),
+				"data":    nil,
+			})
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "Velocidade do veículo atualizada com sucesso.",
 			"data":    v,
 		})
 	}

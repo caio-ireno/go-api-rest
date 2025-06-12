@@ -35,6 +35,22 @@ func (r *VehicleMap) FindAll() (v map[int]internal.Vehicle, err error) {
 	return
 }
 
+func (r *VehicleMap) FindById(id string) (v internal.Vehicle, err error) {
+	fmt.Println("Query parans", id)
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		return v, fmt.Errorf("invalid ID: %w", err)
+	}
+
+	for _, value := range r.db {
+		if value.Id == idInt {
+			v = value
+		}
+	}
+	return
+}
+
 func (r *VehicleMap) FindVelocidadeMediaMarca(brand string) (m float64, err error) {
 	fmt.Println("Query parans", brand)
 	brandCaptalize := utils.CapitalizeFirst(brand)
@@ -128,6 +144,37 @@ func (r *VehicleMap) Save(vh *internal.VehicleAttributes) (v internal.Vehicle, e
 	}
 
 	attr.Id = len(r.db) + 1
+	r.db[attr.Id] = attr
+
+	v = attr
+
+	return
+}
+
+func (r *VehicleMap) Patch(vh *internal.Vehicle) (v internal.Vehicle, err error) {
+	attr := internal.Vehicle{
+		Id: vh.Id,
+		VehicleAttributes: internal.VehicleAttributes{
+
+			Brand:        vh.Brand,
+			Model:        vh.Model,
+			Registration: vh.Registration,
+
+			Color:           vh.Color,
+			FabricationYear: vh.FabricationYear,
+			Capacity:        vh.Capacity,
+			MaxSpeed:        vh.MaxSpeed,
+			FuelType:        vh.FuelType,
+			Transmission:    vh.Transmission,
+			Weight:          vh.Weight,
+			Dimensions: internal.Dimensions{
+				Height: vh.Height,
+				Width:  vh.Weight,
+				Length: vh.Length,
+			},
+		},
+	}
+
 	r.db[attr.Id] = attr
 
 	v = attr
