@@ -1,5 +1,7 @@
 package internal
 
+import "errors"
+
 // Dimensions is a struct that represents a dimension in 3d
 type Dimensions struct {
 	// Height is the height of the dimension
@@ -43,4 +45,47 @@ type Vehicle struct {
 
 	// VehicleAttribue is the attributes of a vehicle
 	VehicleAttributes
+}
+
+func (v *VehicleAttributes) Validate() error {
+	if v.Brand == "" {
+		return errors.New("brand is required")
+	}
+	if v.Model == "" {
+		return errors.New("model is required")
+	}
+	if v.Registration == "" {
+		return errors.New("registration is required")
+	}
+	if v.Color == "" {
+		return errors.New("color is required")
+	}
+	if v.FabricationYear <= 0 {
+		return errors.New("fabrication year must be a positive integer")
+	}
+	if v.Capacity <= 0 {
+		return errors.New("capacity must be a positive integer")
+	}
+	if v.MaxSpeed <= 0 {
+		return errors.New("max speed must be greater than zero")
+	}
+	if v.FuelType == "" {
+		return errors.New("fuel type is required")
+	}
+	if v.Transmission == "" {
+		return errors.New("transmission is required")
+	}
+	if v.Weight <= 0 {
+		return errors.New("weight must be greater than zero")
+	}
+	if v.Height <= 0 {
+		return errors.New("dimensions: height must be greater than zero")
+	}
+	if v.Length <= 0 {
+		return errors.New("dimensions: length must be greater than zero")
+	}
+	if v.Width <= 0 {
+		return errors.New("dimensions: width must be greater than zero")
+	}
+	return nil
 }

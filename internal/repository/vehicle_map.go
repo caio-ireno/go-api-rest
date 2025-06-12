@@ -1,6 +1,12 @@
 package repository
 
-import "app/internal"
+import (
+	"app/internal"
+	"app/pkg/utils"
+	"errors"
+	"fmt"
+	"strconv"
+)
 
 // NewVehicleMap is a function that returns a new instance of VehicleMap
 func NewVehicleMap(db map[int]internal.Vehicle) *VehicleMap {
@@ -14,7 +20,6 @@ func NewVehicleMap(db map[int]internal.Vehicle) *VehicleMap {
 
 // VehicleMap is a struct that represents a vehicle repository
 type VehicleMap struct {
-	// db is a map of vehicles
 	db map[int]internal.Vehicle
 }
 
@@ -26,6 +31,83 @@ func (r *VehicleMap) FindAll() (v map[int]internal.Vehicle, err error) {
 	for key, value := range r.db {
 		v[key] = value
 	}
+
+	return
+}
+
+// FindAll is a method that returns a map of all vehicles
+func (r *VehicleMap) FindByMarcaAndYearInterval(brand, start_year, end_year string) (v map[int]internal.Vehicle, err error) {
+	fmt.Println("Query parans", brand, start_year, end_year)
+	brandCaptalize := utils.CapitalizeFirst(brand)
+
+	v = make(map[int]internal.Vehicle)
+
+	startYearInt, err := strconv.Atoi(start_year)
+	if err != nil {
+		return v, fmt.Errorf("invalid start_year: %w", err)
+	}
+	endYearInt, err := strconv.Atoi(end_year)
+	if err != nil {
+		return v, fmt.Errorf("invalid end_year: %w", err)
+	}
+
+	for key, value := range r.db {
+		if value.Brand == brandCaptalize &&
+			value.FabricationYear >= startYearInt &&
+			value.FabricationYear <= endYearInt {
+			v[key] = value
+		}
+	}
+
+	return
+}
+
+func (r *VehicleMap) FindByColorAndYears(color, year string) (v map[int]internal.Vehicle, err error) {
+
+	v = make(map[int]internal.Vehicle)
+
+	yearInt, err := strconv.Atoi(year)
+
+	if err != nil {
+		return v, errors.New("erro ao converter parametro year")
+	}
+
+	for key, value := range r.db {
+		if value.Color == color && value.FabricationYear == yearInt {
+			v[key] = value
+		}
+	}
+
+	return
+}
+
+func (r *VehicleMap) Save(vh *internal.VehicleAttributes) (v internal.Vehicle, err error) {
+	attr := internal.Vehicle{
+		VehicleAttributes: internal.VehicleAttributes{
+
+			Brand:        vh.Brand,
+			Model:        vh.Model,
+			Registration: vh.Registration,
+
+			Color:           vh.Color,
+			FabricationYear: vh.FabricationYear,
+			Capacity:        vh.Capacity,
+			MaxSpeed:        vh.MaxSpeed,
+			FuelType:        vh.FuelType,
+			Transmission:    vh.Transmission,
+			Weight:          vh.Weight,
+			Dimensions: internal.Dimensions{
+				Height: vh.Height,
+				Width:  vh.Weight,
+				Length: vh.Length,
+			},
+		},
+	}
+
+	attr.Id = len(r.db) + 1
+	r.db[attr.Id] = attr
+
+	v = attr
 
 	return
 }

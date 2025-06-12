@@ -35,7 +35,7 @@ func NewServerChi(cfg *ConfigServerChi) *ServerChi {
 	}
 
 	return &ServerChi{
-		serverAddress: defaultConfig.ServerAddress,
+		serverAddress:  defaultConfig.ServerAddress,
 		loaderFilePath: defaultConfig.LoaderFilePath,
 	}
 }
@@ -72,6 +72,17 @@ func (a *ServerChi) Run() (err error) {
 	rt.Route("/vehicles", func(rt chi.Router) {
 		// - GET /vehicles
 		rt.Get("/", hd.GetAll())
+		// -  GET /GET /vehicles/brand/{brand}/between/{start_year}/{end_year}
+		rt.Get("/brand/{brand}/between/{start_year}/{end_year}", hd.GetByMarcaAndYearInterval())
+
+		// Rota 1 adicionar veiculo
+		rt.Post("/", hd.Save())
+	})
+
+	rt.Route("/vehiclesc", func(rt chi.Router) {
+		// - GET /vehicles by color and years
+		rt.Get("/", hd.GetByColorAndYears())
+
 	})
 
 	// run server
