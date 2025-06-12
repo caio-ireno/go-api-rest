@@ -47,6 +47,10 @@ type Vehicle struct {
 	VehicleAttributes
 }
 
+type UpdateMaxSpeedRequest struct {
+	MaxSpeed float64 `json:"MaxSpeed"`
+}
+
 func (v *VehicleAttributes) ToDomain() *Vehicle {
 	return &Vehicle{
 		VehicleAttributes: *v,

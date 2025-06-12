@@ -181,3 +181,19 @@ func (r *VehicleMap) Patch(vh *internal.Vehicle) (v internal.Vehicle, err error)
 
 	return
 }
+
+func (r *VehicleMap) UpdateMaxSpeed(id int, maxSpeed float64) (v internal.Vehicle, err error) {
+
+	vehicle, ok := r.db[id]
+
+	if !ok {
+		err = fmt.Errorf("vehicle with id %d not found", id)
+		return
+	}
+
+	vehicle.MaxSpeed = maxSpeed
+	r.db[id] = vehicle
+	v = vehicle
+
+	return
+}

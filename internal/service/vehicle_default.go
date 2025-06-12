@@ -151,3 +151,12 @@ func (s *VehicleDefault) Patch(vh *internal.Vehicle) (v internal.Vehicle, err er
 	v, err = s.rp.Patch(vh)
 	return
 }
+
+func (s *VehicleDefault) UpdateMaxSpeed(id int, maxSpeed float64) (v internal.Vehicle, err error) {
+
+	v, err = s.rp.UpdateMaxSpeed(id, maxSpeed)
+	if err != nil {
+		err = apperrors.ErrVehicleNotFound
+	}
+	return
+}

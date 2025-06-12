@@ -379,3 +379,65 @@ func (h *VehicleDefault) Patch() http.HandlerFunc {
 		})
 	}
 }
+
+func (h *VehicleDefault) UpdateMaxSpeed() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vehicleId := chi.URLParam(r, "id")
+		vehicleIdInt, errId := strconv.Atoi(vehicleId)
+
+		if errId != nil {
+			response.JSON(w, http.StatusNotFound, map[string]any{
+				"message": "Id Errado ou Invalido",
+				"data":    nil,
+			})
+			return
+		}
+
+		_, ok := h.sv.FindById(vehicleId)
+
+		if ok != nil {
+			if errors.Is(ok, apperrors.ErrVehicleWithCriteria) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Nenhum veículo encontrado com esses critérios.",
+					"data":    nil,
+				})
+				return
+			}
+		}
+
+		var reqBody internal.UpdateMaxSpeedRequest
+
+		err := json.NewDecoder(r.Body).Decode(&reqBody)
+
+		if err != nil {
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "bad request: Velocidade do veículo mal formatados ou incompletos.",
+				"data":    nil,
+			})
+			return
+		}
+
+		v, err := h.sv.UpdateMaxSpeed(vehicleIdInt, reqBody.MaxSpeed)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+				response.JSON(w, http.StatusConflict, map[string]any{
+					"message": "Veiculo não encontrado",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusInternalServerError, map[string]any{
+				"message": err.Error(),
+				"data":    nil,
+			})
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "Velocidade do veículo atualizada com sucesso.",
+			"data":    v,
+		})
+	}
+}

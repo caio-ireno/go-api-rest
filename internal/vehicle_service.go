@@ -12,4 +12,5 @@ type VehicleService interface {
 	SaveMultipleVehicles(vh *[]VehicleAttributes) (v map[int]Vehicle, err error)
 
 	Patch(vh *Vehicle) (v Vehicle, err error)
+	UpdateMaxSpeed(id int, maxSpeed float64) (v Vehicle, err error)
 }

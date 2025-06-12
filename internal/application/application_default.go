@@ -82,8 +82,11 @@ func (a *ServerChi) Run() (err error) {
 		// - POST multiplos veiculos
 		rt.Post("/batch", hd.SaveMultipleVehicles())
 
+		// - PATCH - vehicles/{id}
+		rt.Patch("/{id}", hd.Patch())
+
 		// - PATCH - vehicles/{id}/update_speed
-		rt.Patch("/{id}/update_speed", hd.Patch())
+		rt.Patch("/{id}/update_speed", hd.UpdateMaxSpeed())
 
 	})
 

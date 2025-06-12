@@ -11,4 +11,5 @@ type VehicleRepository interface {
 	FindById(id string) (v Vehicle, err error)
 
 	Patch(vh *Vehicle) (v Vehicle, err error)
+	UpdateMaxSpeed(id int, maxSpeed float64) (v Vehicle, err error)
 }
