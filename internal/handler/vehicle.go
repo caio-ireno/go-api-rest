@@ -233,6 +233,46 @@ func (h *VehicleDefault) Save() http.HandlerFunc {
 		}
 
 		v, err := h.sv.Save(&reqBody)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleAlreadyExists) {
+				response.JSON(w, http.StatusConflict, map[string]any{
+					"message": "Identificador do veículo já existente",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusInternalServerError, map[string]any{
+				"message": err.Error(),
+				"data":    nil,
+			})
+			return
+		}
+
+		response.JSON(w, http.StatusCreated, map[string]any{
+			"message": "Veículo criado com sucesso.",
+			"data":    v,
+		})
+	}
+}
+
+func (h *VehicleDefault) SaveMultipleVehicles() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var reqBody []internal.VehicleAttributes
+
+		err := json.NewDecoder(r.Body).Decode(&reqBody)
+
+		if err != nil {
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "bad request: Dados do veículo mal formatados ou incompletos.",
+				"data":    nil,
+			})
+			return
+		}
+
+		v, err := h.sv.SaveMultipleVehicles(&reqBody)
 		if err != nil {
 			if errors.Is(err, apperrors.ErrVehicleAlreadyExists) {
 				response.JSON(w, http.StatusConflict, map[string]any{

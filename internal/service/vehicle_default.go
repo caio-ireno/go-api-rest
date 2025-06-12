@@ -66,6 +66,7 @@ func (s *VehicleDefault) FindByMarcaAndYearInterval(brand, start_year, end_year 
 }
 
 func (s *VehicleDefault) Save(vh *internal.VehicleAttributes) (v internal.Vehicle, err error) {
+
 	err = vh.Validate()
 
 	if err != nil {
@@ -74,12 +75,57 @@ func (s *VehicleDefault) Save(vh *internal.VehicleAttributes) (v internal.Vehicl
 	vehicle, _ := s.rp.FindAll()
 
 	for _, vehicle := range vehicle {
-
 		if vehicle.Registration == vh.Registration {
 			err = apperrors.ErrVehicleAlreadyExists
 			return
 		}
 	}
 	v, err = s.rp.Save(vh)
+	return
+}
+
+func (s *VehicleDefault) SaveMultipleVehicles(vh *[]internal.VehicleAttributes) (v map[int]internal.Vehicle, err error) {
+
+	for _, vehicle := range *vh {
+		err = vehicle.Validate()
+	}
+	if err != nil {
+		return
+	}
+
+	vehicleExisting, _ := s.rp.FindAll()
+
+	// criar um MAP com registro como chave
+	registroMap := make(map[string]struct{}) // é menos do que veiculos existentes  pois tem registros repetidos
+	// registroError := make(map[string]string)
+	for _, ve := range vehicleExisting {
+		registroMap[ve.Registration] = struct{}{}
+	}
+
+	v = make(map[int]internal.Vehicle)
+
+	for _, vehicle := range *vh {
+
+		// similar ao in no python
+		_, exists := registroMap[vehicle.Registration]
+
+		if exists {
+			err = apperrors.ErrVehicleAlreadyExists
+			return
+		}
+
+		// Salve cada veículo individualmente
+		saved, saveErr := s.rp.Save(&vehicle)
+
+		if saveErr != nil {
+			err = saveErr
+			return
+		}
+		v[saved.Id] = saved
+
+		// Atualize o map para evitar duplicidade entre os novos também
+		registroMap[vehicle.Registration] = struct{}{}
+	}
+
 	return
 }
