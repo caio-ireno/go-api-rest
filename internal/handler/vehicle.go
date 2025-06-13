@@ -297,6 +297,7 @@ func (h *VehicleDefault) GetByColorAndYears() http.HandlerFunc {
 		}
 
 		data := make(map[int]VehicleJSON)
+
 		for key, value := range v {
 			data[key] = VehicleJSON{
 				ID:              value.Id,
@@ -660,5 +661,56 @@ func (h *VehicleDefault) GetMediaPessoaPorMarca() http.HandlerFunc {
 			"data":    m,
 		})
 
+	}
+}
+
+func (h *VehicleDefault) GetByDimensions() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		lengthParam := r.URL.Query().Get("length")
+		widthParam := r.URL.Query().Get("width")
+
+		fmt.Println(lengthParam, widthParam)
+
+		v, err := h.sv.FindByDimenssion(lengthParam, widthParam)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+				response.JSON(w, http.StatusBadRequest, map[string]any{
+					"message": "Nenhum veiculo encontrado com essas informacoes",
+					"data":    nil,
+				})
+				return
+			}
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "Bad request: Erro",
+				"data":    nil,
+			})
+			return
+		}
+
+		data := make(map[int]VehicleJSON)
+		for key, value := range v {
+			data[key] = VehicleJSON{
+				ID:              value.Id,
+				Brand:           value.Brand,
+				Model:           value.Model,
+				Registration:    value.Registration,
+				Color:           value.Color,
+				FabricationYear: value.FabricationYear,
+				Capacity:        value.Capacity,
+				MaxSpeed:        value.MaxSpeed,
+				FuelType:        value.FuelType,
+				Transmission:    value.Transmission,
+				Weight:          value.Weight,
+				Height:          value.Height,
+				Length:          value.Length,
+				Width:           value.Width,
+			}
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "Sucesso",
+			"data":    data,
+		})
 	}
 }

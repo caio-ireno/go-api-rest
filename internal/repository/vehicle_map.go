@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // NewVehicleMap is a function that returns a new instance of VehicleMap
@@ -277,6 +278,52 @@ func (r *VehicleMap) FindMediaPessoaPorMarca(brand string) (m int, err error) {
 	}
 
 	m = sum / count
+
+	return
+}
+
+func (r *VehicleMap) FindByDimenssion(lengthParam, widthParam string) (v map[int]internal.Vehicle, err error) {
+	lengthParams := strings.Split(lengthParam, "-")
+	widthParams := strings.Split(widthParam, "-")
+
+	v = make(map[int]internal.Vehicle)
+
+	lengthMin, err := strconv.ParseFloat(lengthParams[0], 64)
+	if err != nil {
+		return v, fmt.Errorf("invalid length min: %w", err)
+	}
+	lengthMax, err := strconv.ParseFloat(lengthParams[1], 64)
+	if err != nil {
+		return v, fmt.Errorf("invalid length max: %w", err)
+	}
+
+	widthMin, err := strconv.ParseFloat(widthParams[0], 64)
+	if err != nil {
+		return v, fmt.Errorf("invalid width min: %w", err)
+	}
+	widthMax, err := strconv.ParseFloat(widthParams[1], 64)
+	if err != nil {
+		return v, fmt.Errorf("invalid width max: %w", err)
+	}
+
+	fmt.Println(lengthParams)
+	fmt.Println(widthParams)
+
+	for key, value := range r.db {
+		if value.VehicleAttributes.Dimensions.Length >= lengthMin &&
+			value.VehicleAttributes.Dimensions.Length <= lengthMax &&
+			value.VehicleAttributes.Dimensions.Width >= widthMin &&
+			value.VehicleAttributes.Dimensions.Width <= widthMax {
+			fmt.Println(value)
+
+			v[key] = value
+
+		}
+	}
+
+	if len(v) == 0 {
+		err = apperrors.ErrVehicleNotFound
+	}
 
 	return
 }

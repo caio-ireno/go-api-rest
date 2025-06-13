@@ -103,6 +103,9 @@ func (a *ServerChi) Run() (err error) {
 		// - DELETE - /vehicles/{id}
 		rt.Delete("/{id}", hd.DeleteById())
 
+		// - GET - /vehicles/dimensions?length={min_length}-{max_length}&width={min_width}-{max_width}
+		rt.Get("/dimensions", hd.GetByDimensions())
+
 	})
 
 	rt.Route("/vehiclesc", func(rt chi.Router) {

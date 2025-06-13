@@ -218,3 +218,14 @@ func (s *VehicleDefault) FindMediaPessoaPorMarca(brand string) (m int, err error
 	}
 	return
 }
+
+func (s *VehicleDefault) FindByDimenssion(lengthParam, widthParam string) (v map[int]internal.Vehicle, err error) {
+
+	v, err = s.rp.FindByDimenssion(lengthParam, widthParam)
+
+	if err != nil {
+		return
+	}
+
+	return
+}

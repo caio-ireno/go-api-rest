@@ -11,6 +11,7 @@ type VehicleService interface {
 	FindTipoCombustivel(typeFuel string) (v map[int]Vehicle, err error)
 	FindByTransmissionType(typeTransmission string) (v map[int]Vehicle, err error)
 	FindMediaPessoaPorMarca(brand string) (m int, err error)
+	FindByDimenssion(lengthParam, widthParam string) (v map[int]Vehicle, err error)
 
 	FindVelocidadeMediaMarca(brand string) (m float64, err error)
 	SaveMultipleVehicles(vh *[]VehicleAttributes) (v map[int]Vehicle, err error)
