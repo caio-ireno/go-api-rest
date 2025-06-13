@@ -78,6 +78,58 @@ func (h *VehicleDefault) GetAll() http.HandlerFunc {
 	}
 }
 
+func (h *VehicleDefault) GetTipoCombustivel() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fuel_type := chi.URLParam(r, "type")
+
+		fmt.Println("Query parans", fuel_type)
+
+		v, err := h.sv.FindTipoCombustivel(fuel_type)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Não foram encontrados veículos com esse tipo de combustível.",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusInternalServerError, map[string]any{
+				"message": err.Error(),
+				"data":    nil,
+			})
+			return
+		}
+
+		data := make(map[int]VehicleJSON)
+		for key, value := range v {
+			data[key] = VehicleJSON{
+				ID:              value.Id,
+				Brand:           value.Brand,
+				Model:           value.Model,
+				Registration:    value.Registration,
+				Color:           value.Color,
+				FabricationYear: value.FabricationYear,
+				Capacity:        value.Capacity,
+				MaxSpeed:        value.MaxSpeed,
+				FuelType:        value.FuelType,
+				Transmission:    value.Transmission,
+				Weight:          value.Weight,
+				Height:          value.Height,
+				Length:          value.Length,
+				Width:           value.Width,
+			}
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "success",
+			"data":    data,
+		})
+
+	}
+}
+
 func (h *VehicleDefault) GetByColorAndYears() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {

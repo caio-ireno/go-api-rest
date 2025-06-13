@@ -51,6 +51,19 @@ func (r *VehicleMap) FindById(id string) (v internal.Vehicle, err error) {
 	return
 }
 
+func (r *VehicleMap) FindTipoCombustivel(FuelType string) (v map[int]internal.Vehicle, err error) {
+	fmt.Println("Query parans", FuelType)
+
+	v = make(map[int]internal.Vehicle)
+
+	for key, value := range r.db {
+		if value.VehicleAttributes.FuelType == FuelType {
+			v[key] = value
+		}
+	}
+	return
+}
+
 func (r *VehicleMap) FindVelocidadeMediaMarca(brand string) (m float64, err error) {
 	fmt.Println("Query parans", brand)
 	brandCaptalize := utils.CapitalizeFirst(brand)

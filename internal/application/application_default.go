@@ -76,6 +76,10 @@ func (a *ServerChi) Run() (err error) {
 		rt.Get("/brand/{brand}/between/{start_year}/{end_year}", hd.GetByMarcaAndYearInterval())
 		// -  GET /GET /vehicles/average_speed/brand/{brand}
 		rt.Get("/average_speed/brand/{brand}", hd.GetVelocidadeMediaMarca())
+
+		///vehicles/fuel_type/{type}
+		rt.Get("/fuel_type/{type}", hd.GetTipoCombustivel())
+
 		// Rota 1 adicionar veiculo
 		rt.Post("/", hd.Save())
 

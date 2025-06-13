@@ -32,6 +32,20 @@ func (s *VehicleDefault) FindById(id string) (v internal.Vehicle, err error) {
 	return
 }
 
+func (s *VehicleDefault) FindTipoCombustivel(FuelType string) (v map[int]internal.Vehicle, err error) {
+	v, err = s.rp.FindTipoCombustivel(FuelType)
+
+	if err != nil {
+		return
+	}
+
+	if len(v) == 0 {
+		err = apperrors.ErrVehicleNotFound
+	}
+
+	return
+}
+
 func (s *VehicleDefault) FindByColorAndYears(color, year string) (v map[int]internal.Vehicle, err error) {
 	v, err = s.rp.FindByColorAndYears(color, year)
 
