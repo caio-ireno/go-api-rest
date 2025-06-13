@@ -159,6 +159,57 @@ func (h *VehicleDefault) DeleteById() http.HandlerFunc {
 	}
 }
 
+func (h *VehicleDefault) UpdateFuel() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		idInt, errId := strconv.Atoi(id)
+
+		if errId != nil {
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "bad request:Id mal formatado ou fora do padrão",
+				"data":    nil,
+			})
+			return
+		}
+
+		var reqBody internal.UpdateFuel
+
+		err := json.NewDecoder(r.Body).Decode(&reqBody)
+
+		if err != nil {
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "bad request: Tipo de combustivel do veículo mal formatados ou incompletos.",
+				"data":    nil,
+			})
+			return
+		}
+
+		vh, err := h.sv.UpdateFuel(idInt, reqBody.FuelType)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Veículo não encontrado.",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "bad request: Tipo de combustivel do veículo mal formatados ou incompletos.",
+				"data":    nil,
+			})
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "Tipo de combustivel do veículo atualizado",
+			"data":    vh,
+		})
+
+	}
+}
+
 func (h *VehicleDefault) GetTransmissionType() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -84,6 +84,20 @@ func (r *VehicleMap) FindByTransmissionType(typeTransmission string) (v map[int]
 
 }
 
+func (r *VehicleMap) UpdateFuel(id int, fuel string) (v internal.Vehicle, err error) {
+
+	_, ok := r.db[id]
+
+	if !ok {
+		err = apperrors.ErrVehicleNotFound
+	}
+
+	v = r.db[id]
+	v.FuelType = fuel
+
+	return
+
+}
 func (r *VehicleMap) FindTipoCombustivel(FuelType string) (v map[int]internal.Vehicle, err error) {
 	fmt.Println("Query parans", FuelType)
 

@@ -22,6 +22,15 @@ func (s *VehicleDefault) FindAll() (v map[int]internal.Vehicle, err error) {
 	return
 }
 
+func (s *VehicleDefault) UpdateFuel(id int, fuel string) (v internal.Vehicle, err error) {
+	v, err = s.rp.UpdateFuel(id, fuel)
+
+	if err != nil {
+		return
+	}
+
+	return
+}
 func (s *VehicleDefault) FindById(id string) (v internal.Vehicle, err error) {
 	v, err = s.rp.FindById(id)
 

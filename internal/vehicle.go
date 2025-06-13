@@ -51,6 +51,10 @@ type UpdateMaxSpeedRequest struct {
 	MaxSpeed float64 `json:"MaxSpeed"`
 }
 
+type UpdateFuel struct {
+	FuelType string `json:"FuelType"`
+}
+
 func (v *VehicleAttributes) ToDomain() *Vehicle {
 	return &Vehicle{
 		VehicleAttributes: *v,

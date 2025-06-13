@@ -16,6 +16,7 @@ type VehicleService interface {
 
 	Patch(vh *Vehicle) (v Vehicle, err error)
 	UpdateMaxSpeed(id int, maxSpeed float64) (v Vehicle, err error)
+	UpdateFuel(id int, fuelType string) (v Vehicle, err error)
 
 	DeleteById(id string) (err error)
 }

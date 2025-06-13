@@ -89,6 +89,9 @@ func (a *ServerChi) Run() (err error) {
 		rt.Patch("/{id}", hd.Patch())
 		// - PATCH - vehicles/{id}/update_speed
 		rt.Patch("/{id}/update_speed", hd.UpdateMaxSpeed())
+		// - PATCH /vehicles/{id}/update_fuel
+
+		rt.Patch("/{id}/update_fuel", hd.UpdateFuel())
 
 		// - PATCH - /vehicles/transmission/{type}
 		rt.Get("/transmission/{type}", hd.GetTransmissionType())
