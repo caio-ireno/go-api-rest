@@ -9,10 +9,13 @@ type VehicleService interface {
 	FindById(id string) (v Vehicle, err error)
 	FindByMarcaAndYearInterval(brand, start_year, end_year string) (v map[int]Vehicle, err error)
 	FindTipoCombustivel(typeFuel string) (v map[int]Vehicle, err error)
+	FindByTransmissionType(typeTransmission string) (v map[int]Vehicle, err error)
 
 	FindVelocidadeMediaMarca(brand string) (m float64, err error)
 	SaveMultipleVehicles(vh *[]VehicleAttributes) (v map[int]Vehicle, err error)
 
 	Patch(vh *Vehicle) (v Vehicle, err error)
 	UpdateMaxSpeed(id int, maxSpeed float64) (v Vehicle, err error)
+
+	DeleteById(id string) (err error)
 }

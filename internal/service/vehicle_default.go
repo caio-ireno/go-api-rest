@@ -32,6 +32,32 @@ func (s *VehicleDefault) FindById(id string) (v internal.Vehicle, err error) {
 	return
 }
 
+func (s *VehicleDefault) DeleteById(id string) (err error) {
+	err = s.rp.DeleteById(id)
+
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (s *VehicleDefault) FindByTransmissionType(typeTransmission string) (v map[int]internal.Vehicle, err error) {
+
+	v, err = s.rp.FindByTransmissionType(typeTransmission)
+
+	if err != nil {
+		err = apperrors.ErrInvalidVehicleData
+		return
+	}
+
+	if len(v) == 0 {
+		err = apperrors.ErrVehicleNotFound
+		return
+	}
+
+	return
+}
+
 func (s *VehicleDefault) FindTipoCombustivel(FuelType string) (v map[int]internal.Vehicle, err error) {
 	v, err = s.rp.FindTipoCombustivel(FuelType)
 

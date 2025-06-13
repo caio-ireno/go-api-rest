@@ -130,6 +130,95 @@ func (h *VehicleDefault) GetTipoCombustivel() http.HandlerFunc {
 	}
 }
 
+func (h *VehicleDefault) DeleteById() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		fmt.Println("Query parans", id)
+
+		err := h.sv.DeleteById(id)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Veiculo não encontrado",
+					"data":    nil,
+				})
+				return
+			}
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "Erro Interno no servidor",
+				"data":    nil,
+			})
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "Veículo removido com sucesso.",
+		})
+
+	}
+}
+
+func (h *VehicleDefault) GetTransmissionType() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		typeTransmission := chi.URLParam(r, "type")
+
+		fmt.Println("Query parans", typeTransmission)
+
+		v, err := h.sv.FindByTransmissionType(typeTransmission)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrInvalidVehicleData) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Nenhum veículo encontrado com esses critérios.",
+					"data":    nil,
+				})
+				return
+			}
+
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Não foram encontrados veículos com esse tipo de transmissão.",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusInternalServerError, map[string]any{
+				"message": err.Error(),
+				"data":    nil,
+			})
+			return
+		}
+
+		data := make(map[int]VehicleJSON)
+		for key, value := range v {
+			data[key] = VehicleJSON{
+				ID:              value.Id,
+				Brand:           value.Brand,
+				Model:           value.Model,
+				Registration:    value.Registration,
+				Color:           value.Color,
+				FabricationYear: value.FabricationYear,
+				Capacity:        value.Capacity,
+				MaxSpeed:        value.MaxSpeed,
+				FuelType:        value.FuelType,
+				Transmission:    value.Transmission,
+				Weight:          value.Weight,
+				Height:          value.Height,
+				Length:          value.Length,
+				Width:           value.Width,
+			}
+		}
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "success",
+			"data":    data,
+		})
+
+	}
+}
+
 func (h *VehicleDefault) GetByColorAndYears() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {

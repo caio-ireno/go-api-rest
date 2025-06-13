@@ -2,6 +2,7 @@ package repository
 
 import (
 	"app/internal"
+	"app/pkg/apperrors"
 	"app/pkg/utils"
 	"errors"
 	"fmt"
@@ -49,6 +50,38 @@ func (r *VehicleMap) FindById(id string) (v internal.Vehicle, err error) {
 		}
 	}
 	return
+}
+
+func (r *VehicleMap) DeleteById(id string) (err error) {
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		err = errors.New("id incorreto ou mal formatado")
+		return
+	}
+
+	_, ok := r.db[idInt]
+	if !ok {
+		err = apperrors.ErrVehicleNotFound
+		return
+	}
+
+	delete(r.db, idInt)
+
+	return
+
+}
+
+func (r *VehicleMap) FindByTransmissionType(typeTransmission string) (v map[int]internal.Vehicle, err error) {
+	v = make(map[int]internal.Vehicle)
+
+	for key, value := range r.db {
+		if value.VehicleAttributes.Transmission == typeTransmission {
+			v[key] = value
+		}
+	}
+	return
+
 }
 
 func (r *VehicleMap) FindTipoCombustivel(FuelType string) (v map[int]internal.Vehicle, err error) {

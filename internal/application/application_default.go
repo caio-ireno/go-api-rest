@@ -82,15 +82,19 @@ func (a *ServerChi) Run() (err error) {
 
 		// Rota 1 adicionar veiculo
 		rt.Post("/", hd.Save())
-
 		// - POST multiplos veiculos
 		rt.Post("/batch", hd.SaveMultipleVehicles())
 
 		// - PATCH - vehicles/{id}
 		rt.Patch("/{id}", hd.Patch())
-
 		// - PATCH - vehicles/{id}/update_speed
 		rt.Patch("/{id}/update_speed", hd.UpdateMaxSpeed())
+
+		// - PATCH - /vehicles/transmission/{type}
+		rt.Get("/transmission/{type}", hd.GetTransmissionType())
+
+		// - DELETE - /vehicles/{id}
+		rt.Delete("/{id}", hd.DeleteById())
 
 	})
 
