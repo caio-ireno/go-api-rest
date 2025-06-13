@@ -135,6 +135,37 @@ func (r *VehicleMap) FindVelocidadeMediaMarca(brand string) (m float64, err erro
 	return
 }
 
+func (r *VehicleMap) FindByPeso(min, max string) (v map[int]internal.Vehicle, err error) {
+
+	minFloat, err := strconv.ParseFloat(min, 64)
+	v = make(map[int]internal.Vehicle)
+
+	if err != nil {
+		err = errors.New("erro ao converter dados")
+		return
+	}
+
+	maxFloat, err := strconv.ParseFloat(max, 64)
+
+	if err != nil {
+		err = errors.New("erro ao converter dados")
+		return
+	}
+
+	for key, value := range r.db {
+		if value.VehicleAttributes.Weight >= minFloat &&
+			value.VehicleAttributes.Weight <= maxFloat {
+			v[key] = value
+		}
+	}
+	if len(v) == 0 {
+		err = apperrors.ErrVehicleNotFound
+		return
+	}
+
+	return
+}
+
 // FindAll is a method that returns a map of all vehicles
 func (r *VehicleMap) FindByMarcaAndYearInterval(brand, start_year, end_year string) (v map[int]internal.Vehicle, err error) {
 	fmt.Println("Query parans", brand, start_year, end_year)

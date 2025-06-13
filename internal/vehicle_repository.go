@@ -10,6 +10,7 @@ type VehicleRepository interface {
 	FindVelocidadeMediaMarca(brand string) (m float64, err error)
 	FindByTransmissionType(typeTransmission string) (v map[int]Vehicle, err error)
 	FindByDimenssion(lengthParam, widthParam string) (v map[int]Vehicle, err error)
+	FindByPeso(min, max string) (v map[int]Vehicle, err error)
 
 	FindMediaPessoaPorMarca(brand string) (m int, err error)
 

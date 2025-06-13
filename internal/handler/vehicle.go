@@ -714,3 +714,60 @@ func (h *VehicleDefault) GetByDimensions() http.HandlerFunc {
 		})
 	}
 }
+
+func (h *VehicleDefault) GetByPeso() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		minWeight := r.URL.Query().Get("min")
+		maxWeight := r.URL.Query().Get("max")
+
+		fmt.Println(minWeight, maxWeight)
+
+		// map
+		v, err := h.sv.FindByPeso(minWeight, maxWeight)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleNotFound) {
+
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": "Veiculos nao encontrado com esses parâmetros",
+					"data":    nil,
+				})
+				return
+			}
+
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "Bad Request: Erro",
+				"data":    nil,
+			})
+			return
+		}
+
+		data := make(map[int]VehicleJSON)
+
+		for key, value := range v {
+			data[key] = VehicleJSON{
+				ID:              value.Id,
+				Brand:           value.Brand,
+				Model:           value.Model,
+				Registration:    value.Registration,
+				Color:           value.Color,
+				FabricationYear: value.FabricationYear,
+				Capacity:        value.Capacity,
+				MaxSpeed:        value.MaxSpeed,
+				FuelType:        value.FuelType,
+				Transmission:    value.Transmission,
+				Weight:          value.Weight,
+				Height:          value.Height,
+				Length:          value.Length,
+				Width:           value.Width,
+			}
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "Success",
+			"data":    data,
+		})
+
+	}
+}

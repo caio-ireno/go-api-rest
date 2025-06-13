@@ -229,3 +229,13 @@ func (s *VehicleDefault) FindByDimenssion(lengthParam, widthParam string) (v map
 
 	return
 }
+
+func (s *VehicleDefault) FindByPeso(min, max string) (v map[int]internal.Vehicle, err error) {
+	v, err = s.rp.FindByPeso(min, max)
+
+	if err != nil {
+		return
+	}
+
+	return
+}

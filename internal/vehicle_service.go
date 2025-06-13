@@ -13,6 +13,8 @@ type VehicleService interface {
 	FindMediaPessoaPorMarca(brand string) (m int, err error)
 	FindByDimenssion(lengthParam, widthParam string) (v map[int]Vehicle, err error)
 
+	FindByPeso(min, max string) (v map[int]Vehicle, err error)
+
 	FindVelocidadeMediaMarca(brand string) (m float64, err error)
 	SaveMultipleVehicles(vh *[]VehicleAttributes) (v map[int]Vehicle, err error)
 
