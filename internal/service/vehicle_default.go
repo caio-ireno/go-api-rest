@@ -209,3 +209,12 @@ func (s *VehicleDefault) UpdateMaxSpeed(id int, maxSpeed float64) (v internal.Ve
 	}
 	return
 }
+
+func (s *VehicleDefault) FindMediaPessoaPorMarca(brand string) (m int, err error) {
+	m, err = s.rp.FindMediaPessoaPorMarca(brand)
+
+	if err != nil {
+		return
+	}
+	return
+}

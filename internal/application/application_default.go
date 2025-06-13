@@ -96,6 +96,10 @@ func (a *ServerChi) Run() (err error) {
 		// - PATCH - /vehicles/transmission/{type}
 		rt.Get("/transmission/{type}", hd.GetTransmissionType())
 
+		// - GET -  /vehicles/average_capacity/brand/{brand}
+		// Obter a capacidade média de pessoas por marca
+		rt.Get("/average_capacity/brand/{brand}", hd.GetMediaPessoaPorMarca())
+
 		// - DELETE - /vehicles/{id}
 		rt.Delete("/{id}", hd.DeleteById())
 

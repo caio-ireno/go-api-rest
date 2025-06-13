@@ -633,3 +633,32 @@ func (h *VehicleDefault) UpdateMaxSpeed() http.HandlerFunc {
 		})
 	}
 }
+
+func (h *VehicleDefault) GetMediaPessoaPorMarca() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		brand := chi.URLParam(r, "brand")
+
+		m, err := h.sv.FindMediaPessoaPorMarca(brand)
+
+		if err != nil {
+			if errors.Is(err, apperrors.ErrVehicleBrand) {
+				response.JSON(w, http.StatusNotFound, map[string]any{
+					"message": " Não foram encontrados veículos dessa marca.",
+					"data":    nil,
+				})
+				return
+			}
+			response.JSON(w, http.StatusBadRequest, map[string]any{
+				"message": "Bad Request: Erro no servidor",
+				"data":    nil,
+			})
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "capacidade média de pessoas dos veículos da marca",
+			"data":    m,
+		})
+
+	}
+}

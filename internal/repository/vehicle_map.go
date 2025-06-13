@@ -257,3 +257,26 @@ func (r *VehicleMap) UpdateMaxSpeed(id int, maxSpeed float64) (v internal.Vehicl
 
 	return
 }
+
+func (r *VehicleMap) FindMediaPessoaPorMarca(brand string) (m int, err error) {
+	brandCapitalized := utils.CapitalizeFirst(brand)
+
+	var count int
+	var sum int
+
+	for _, value := range r.db {
+		if value.VehicleAttributes.Brand == brandCapitalized {
+			fmt.Println(value)
+			count += 1
+			sum += (value.VehicleAttributes.Capacity)
+		}
+	}
+	if count == 0 {
+		err = apperrors.ErrVehicleBrand
+		return
+	}
+
+	m = sum / count
+
+	return
+}
